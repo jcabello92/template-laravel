@@ -1,0 +1,34 @@
+name: ${PROJECT_NAME}-laravel
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ${PROJECT_NAME}-laravel-app
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./volume/app/src:/var/www/html
+    networks:
+      - template-network
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: ${PROJECT_NAME}-laravel-caddy
+    restart: always
+    volumes:
+      - ./volume/app/src:/var/www/html
+      - ./volume/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./volume/caddy/data:/data
+    networks:
+      - template-network
+    depends_on:
+      - app
+
+networks:
+  template-network:
+    external: true
+    name: ${PROJECT_NAME}-network

@@ -1,0 +1,10 @@
+.env
+.env.*
+.gitignore
+docker-compose.prod.yml
+README.md
+
+.git/
+volume/
+
+.DS_Store
