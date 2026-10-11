@@ -15,4 +15,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY ./volume/app/src .
 RUN chown -R www-data:www-data /var/www/html
 RUN composer install --no-dev --optimize-autoloader
+RUN chown -R www-data:www-data /var/www/html
 CMD ["php-fpm"]
