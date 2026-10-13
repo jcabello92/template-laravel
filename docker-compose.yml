@@ -28,6 +28,40 @@ services:
     depends_on:
       - app
 
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ${PROJECT_NAME}-laravel-queue
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./volume/app/src:/var/www/html
+    command: sh -c "if [ -f artisan ]; then php artisan queue:work --tries=3 --timeout=90; else echo 'Proyecto no inicializado. Manteniendo contenedor vivo...' && tail -f /dev/null; fi"
+    networks:
+      - template-network
+    depends_on:
+      - app
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ${PROJECT_NAME}-laravel-scheduler
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./volume/app/src:/var/www/html
+    command: sh -c "if [ -f artisan ]; then php artisan schedule:work; else echo 'Proyecto no inicializado. Manteniendo contenedor vivo...' && tail -f /dev/null; fi"
+    networks:
+      - template-network
+    depends_on:
+      - app
+
 networks:
   template-network:
     external: true
